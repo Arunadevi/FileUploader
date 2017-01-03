@@ -1,9 +1,16 @@
 app.component('main', {
     controller: function ($scope, $http) {
         $scope.options = {
-            acceptFileTypes: /(\.|\/)(mp3|mp4)$/i,
+            acceptFileTypes: /(\.|\/)(mp3|mp4|flv|avi|mov|mpg|f4V|m4v|asf|wmv|vob|mod|3gp|mkv|divx|xvid|webm)$/i,
             add: function (e, data) {
-                console.log(e);
+                var acceptFileTypes = /(\.|\/)(mp3|mp4|flv|avi|mov|mpg|f4V|m4v|asf|wmv|vob|mod|3gp|mkv|divx|xvid|webm)$/i;
+                if(data.originalFiles[0]['type'].length && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    alert('Not an accepted video file type. Only videos are embeddable');
+                }
+                if(data.originalFiles[0]['size'].length && data.originalFiles[0]['size'] > 5000000) {
+                    alert('Filesize is too big');
+                    return;
+                }
                 data.submit();
             },
             done: function (e, data) {
@@ -12,7 +19,7 @@ app.component('main', {
             fail: function (e, data) {
                 alert(data.result.error);
             },
-            maxFileSize: 5000000,
+            maxFileSize: 5000000, // 8 GB
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
                 $('#progress .bar').css(
